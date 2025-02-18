@@ -13,6 +13,21 @@ return [
     |
     */
 
+
+    'guards' => [
+        'web' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
+
+        'api' => [
+            'driver' => 'jwt',  // ✅ Use JWT driver
+            'provider' => 'users',
+            'hash' => false,
+        ],
+    ],
+
+
     'defaults' => [
         'guard' => env('AUTH_GUARD', 'web'),
         'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
@@ -35,12 +50,7 @@ return [
     |
     */
 
-    'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
-    ],
+
 
     /*
     |--------------------------------------------------------------------------

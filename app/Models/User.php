@@ -2,29 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use Notifiable;
 
-    // Users can have many products (if needed, depending on the use case)
-    public function products()
+    protected $fillable = ['name', 'email', 'password'];
+
+    // ✅ Add the required JWT methods
+    public function getJWTIdentifier()
     {
-        return $this->hasMany(Product::class);
+        return $this->getKey();
     }
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'name',     // Allow mass-assignment for the name field
-        'email',    // Allow mass-assignment for the email field
-        'password', // Allow mass-assignment for the password field
-    ];
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
 }
