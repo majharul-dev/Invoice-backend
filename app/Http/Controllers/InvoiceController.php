@@ -4,12 +4,29 @@ namespace App\Http\Controllers;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class InvoiceController extends Controller
 {
     public function index()
     {
-        return response()->json(Invoice::with('items')->get());
+        try {
+            // Attempt to authenticate the user with the token
+            $user = JWTAuth::parseToken()->authenticate();
+
+            // Log the authenticated user (optional)
+            \Log::info('Authenticated user:', ['user' => $user]);
+
+            // If user is authenticated, return invoices
+            return response()->json(Invoice::with('items')->get());
+
+        } catch (\Exception $e) {
+            // Log the error message if token is invalid or expired
+            \Log::error('Authentication error:', ['error' => $e->getMessage()]);
+
+            // Return an error message if token is invalid or expired
+            return response()->json(['error' => 'Unauthenticated.'], 401);
+        }
     }
 
     public function store(Request $request)
