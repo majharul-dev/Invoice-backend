@@ -41,6 +41,7 @@ class AuthController extends Controller
     /**
      * Login and get JWT token
      */
+
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -48,13 +49,15 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        if (!$token = Auth::attempt($credentials)) {
+        // Generate JWT token
+        if (!$token = JWTAuth::attempt($credentials)) {
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
         return response()->json([
             'message' => 'Login successful',
             'token' => $token,
+            'user' => Auth::user(), // Include user info if needed
         ]);
     }
 

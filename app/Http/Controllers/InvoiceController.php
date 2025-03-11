@@ -11,20 +11,15 @@ class InvoiceController extends Controller
     public function index()
     {
         try {
-            // Attempt to authenticate the user with the token
+            // Authenticate user from JWT token
             $user = JWTAuth::parseToken()->authenticate();
 
-            // Log the authenticated user (optional)
-            \Log::info('Authenticated user:', ['user' => $user]);
+            // Fetch only invoices that belong to the authenticated user
+            $invoices = Invoice::where('user_id', $user->id)->with('items')->get();
 
-            // If user is authenticated, return invoices
-            return response()->json(Invoice::with('items')->get());
+            return response()->json($invoices);
 
         } catch (\Exception $e) {
-            // Log the error message if token is invalid or expired
-            \Log::error('Authentication error:', ['error' => $e->getMessage()]);
-
-            // Return an error message if token is invalid or expired
             return response()->json(['error' => 'Unauthenticated.'], 401);
         }
     }
